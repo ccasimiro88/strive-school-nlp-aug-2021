@@ -80,7 +80,8 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 #  need for a `group_texts` function
 # Append the <|endoftext|> special token at the end of each sentence
 def tokenize(sentences):
-    return tokenizer([sentence + tokenizer.eos_token for sentence in sentences['text']])
+    return tokenizer([sentence + tokenizer.eos_token for sentence in sentences['text']],
+                     truncation=True)
 
 
 # Taken from: https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
@@ -120,9 +121,9 @@ model = AutoModelForCausalLM.from_pretrained(model_name,
                                              config=config)
 
 training_args = TrainingArguments(no_cuda=bool(torch.cuda.is_available()),
-                                  per_device_train_batch_size=1,
-                                  per_device_eval_batch_size=1,
-                                  gradient_accumulation_steps=4,
+                                  per_device_train_batch_size=2,
+                                  per_device_eval_batch_size=2,
+                                  gradient_accumulation_steps=1,
                                   max_steps=2,
                                   logging_steps=1,
                                   output_dir='gpt2-recipes')

@@ -6,11 +6,6 @@ from transformers import (
 import logging
 import sys
 
-# 0) SETUP
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
 # 1) LOAD FINE-TUNED MODEL AND TOKENIZER
 checkpoint = sys.argv[1]  # path to a fine-tuned model
 config = AutoConfig.from_pretrained(pretrained_model_name_or_path=checkpoint)
