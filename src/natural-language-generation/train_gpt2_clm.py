@@ -69,12 +69,12 @@ SEED = 10  # set seed var for reproducibility
 train_sentences, test_sentences = train_test_split(sentences,
                                                    test_size=0.1,
                                                    # change the train_size for rapid testing (for example, use 0.1)
-                                                   train_size=0.1,
+                                                   train_size=0.9,
                                                    random_state=SEED)
 
 # write into files
 for split, sents in zip(['train', 'test'], [train_sentences, test_sentences]):
-    with open(f"{split}.txt", 'w') as fn:
+    with open(f"{split}.txt", 'w', encoding='utf-8') as fn:
         fn.write('\n'.join(sents))
 
 # Write to file
@@ -83,8 +83,7 @@ logger.info(f"Created splits of size,"
             f"test.json: {len(test_sentences)}")
 
 # Use the "load_dataset" method with the "json" builder to create the features
-dataset = load_dataset('text', data_files={'train': 'train.txt',
-                                           'test': 'test.txt'})
+dataset = load_dataset('text', data_files={'train': 'train.txt', 'test': 'test.txt'})
 
 # 2) TOKENIZE DATA AND PREPARE INPUTS AND LABELS
 # Instantiate tokenizer
@@ -149,25 +148,12 @@ dataset_for_lm = dataset_grouped.map(add_labels,
 
 # 3) TRAIN THE CAUSAL LANGUAGE MODEL
 # We use the "Trainer" API to perform the training loop
-# Instantiate the model class
-from transformers import (
-    AutoConfig,
-    AutoModelForCausalLM,
-    Trainer,
-    TrainingArguments,
-    default_data_collator,
-)
-import torch
-
-
 # TODO: experiment with different model configuration and batch sizes until
 # the models fits into GPU memory (otherwise it generated CUDA-out-of-memory error)
 # The model is instantiated from the pretrained GPT-2 model
 # Here, I reduced the number of attention head and layers,
 # to significantly reduce the model size and make sure it fits in the GPU memory
-config = AutoConfig.from_pretrained(pretrained_model,
-                                    n_head=6,  # reduce the size of the model for memory reasons
-                                    n_layer=6)
+config = AutoConfig.from_pretrained(pretrained_model)
 model = AutoModelForCausalLM.from_pretrained(pretrained_model,
                                              config=config)
 
@@ -186,10 +172,9 @@ training_args = TrainingArguments(no_cuda=torch.cuda.is_available(),
                                   evaluation_strategy='epoch',
                                   save_strategy='epoch',
                                   logging_steps=100,
-                                  max_steps=1,
-                                  logging_dir='gpt2-half-recipes/tb',  # where to store the tensorboard
-                                  num_train_epochs=1,
-                                  output_dir='gpt2-half-recipes')
+                                  logging_dir='gpt2-full-bs-32-recipes/tb',  # where to store the tensorboard
+                                  num_train_epochs=3,
+                                  output_dir='gpt2-full-bs-32-recipes')
 
 # Start the training!
 # Initialize our Trainer
