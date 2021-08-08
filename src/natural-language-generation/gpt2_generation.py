@@ -23,10 +23,7 @@ while True:
     # 3) RUN CONDITIONAL GENERATION
     print(f"Run conditional generation with prompt: <{prompt}>")
     output_sentence = model.generate(input_ids=tokenized_prompt['input_ids'],
-                                     max_length=max_length,
-                                     top_p=0.9,
-                                     top_k=100,
-                                     do_sample=True)
+                                     max_length=max_length)
 
     output_sentence.squeeze_()  # remove batch dimension
     generated_text = tokenizer.decode(output_sentence)
