@@ -87,7 +87,6 @@ dataset = load_dataset('text', data_files={'train': 'train.txt', 'test': 'test.t
 
 # 2) TOKENIZE DATA AND PREPARE INPUTS AND LABELS
 # Instantiate tokenizer
-from transformers import AutoTokenizer
 pretrained_model = 'gpt2'
 tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=pretrained_model)
 
